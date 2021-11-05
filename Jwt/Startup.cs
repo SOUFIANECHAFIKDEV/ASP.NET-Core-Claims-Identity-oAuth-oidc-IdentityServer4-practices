@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Jwt.Settings;
+using Jwt.Domain;
+using Microsoft.AspNetCore.Identity;
+using Jwt.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jwt
 {
@@ -27,6 +31,13 @@ namespace Jwt
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JWTSetting>(Configuration.GetSection("Jwt"));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

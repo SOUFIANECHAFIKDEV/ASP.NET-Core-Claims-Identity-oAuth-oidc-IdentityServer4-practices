@@ -16,12 +16,29 @@ namespace Jwt.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JWTSetting _jWTSetting;
 
-        public AuthService(UserManager<ApplicationUser> userManager, IOptions<JWTSetting> jWTSetting)
+        public AuthService(UserManager<ApplicationUser> userManager, IOptions<JWTSetting> jWTSetting, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _jWTSetting = jWTSetting.Value;
+            _roleManager = roleManager;
+        }
+
+        public async Task<string> AddRoleAsync(AddRoleModel model)
+        {
+           var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user is null || !await _roleManager.RoleExistsAsync(model.Role))
+                return "Invalid user ID or Role";
+
+            if (await _userManager.IsInRoleAsync(user, model.Role))
+                return "user alerady assigned to this role";
+
+            var result = await _userManager.AddToRoleAsync(user, model.Role);
+
+            return result.Succeeded ? string.Empty : "Somthing went wrong";
         }
 
         public async Task<AuthModel> GetTokenAsync(TokenRequestModel model)

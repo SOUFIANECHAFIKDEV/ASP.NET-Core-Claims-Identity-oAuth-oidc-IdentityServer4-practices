@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Jwt.Services
 {
-    interface IAuthService
+    public interface IAuthService
     {
         Task<AuthModel> RegisterAsync(RegisterModel model);
     }

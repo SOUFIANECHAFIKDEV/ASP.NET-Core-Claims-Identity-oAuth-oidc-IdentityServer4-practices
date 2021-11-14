@@ -27,12 +27,12 @@ namespace Jwt.Services
         public async Task<AuthModel> RegisterAsync(RegisterModel model)
         {
             #region check if the aletady user exists in database
-            if (_userManager.FindByEmailAsync(model.Email) is not null)
+            if (await _userManager.FindByEmailAsync(model.Email) is not null)
             {
                 return new AuthModel { Message = "Email is alreday registerrd" };
             }
 
-            if (_userManager.FindByNameAsync(model.Username) is not null)
+            if (await _userManager.FindByNameAsync(model.Username) is not null)
             {
                 return new AuthModel { Message = "Username is alreday registerrd" };
             }
